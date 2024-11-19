@@ -2,19 +2,43 @@ version: '3'
 
 services:
   # App Service
-  app_place:    
+  my_app:    
     build:
       context: . 
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
-    container_name: backend_place
+    container_name: backend_app
     hostname: backend
     restart: unless-stopped
     tty: true
-    networks: # Networks to join (Services on the same network can communicate with each other using their name)
-      - place-network
+    networks: 
+      - app-network
 
+ #MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: my_app_db
+      MYSQL_ROOT_PASSWORD: password
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+#Docker Networks
 networks:
-  place-network:
+  app-network:
     driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
