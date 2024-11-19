@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  # App Service
+  app_place:    
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    container_name: backend_place
+    hostname: backend
+    restart: unless-stopped
+    tty: true
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - place-network
+
+networks:
+  place-network:
+    driver: bridge
